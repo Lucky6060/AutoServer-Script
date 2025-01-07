@@ -12,7 +12,10 @@ $SafeModePassword = Read-Host "Enter the desired SafeModePassword"              
 $SecureSafeModePassword = ConvertTo-SecureString $SafeModePassword -AsPlainText -Force
 
 #installs python via chocolatey
-choco install python --pre 
+choco install python --pre -a
+
+
+
 
 #Set Static IP Address
 $Interface = Get-NetAdapter | Where-Object {$_.Status -eq "Up"} #Get the active network interface
@@ -28,8 +31,6 @@ if ($Interface) {
     exit
 }
 
-#Rename the Computer
-Rename-Computer -NewName $NewComputerName -Force
 
 #Install DNS, ADDS, and WIM
 Install-WindowsFeature -Name AD-Domain-Services, DNS, Windows-Internal-Database -IncludeManagementTools
@@ -41,5 +42,9 @@ Install-ADDSForest -DomainName $DomainName `
     -DomainNetBIOSName $NetBIOSName `
     -SafeModeAdministratorPassword $SecureSafeModePassword `
     -Force
+
+#Rename the Computer
+Rename-Computer -NewName $NewComputerName -Force
+
 #Post-installation reboot
-Write-Host "Installation complete. Rebooting the server before anything else, you can do " -ForegroundColor Green
+Write-Host "Installation complete. Reboot the server with Restart-Computer" -ForegroundColor Green
