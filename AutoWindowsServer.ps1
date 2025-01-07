@@ -11,16 +11,8 @@ $SafeModePassword = Read-Host "Enter the desired SafeModePassword"              
 #Convert Safe Mode password to a secure string
 $SecureSafeModePassword = ConvertTo-SecureString $SafeModePassword -AsPlainText -Force
 
-
-
-#Install chocolatey so we can install python
-Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; Invoke-Expression ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-
 #installs python via chocolatey
 choco install python --pre 
-
-
-
 
 #Set Static IP Address
 $Interface = Get-NetAdapter | Where-Object {$_.Status -eq "Up"} #Get the active network interface
@@ -50,4 +42,4 @@ Install-ADDSForest -DomainName $DomainName `
     -SafeModeAdministratorPassword $SecureSafeModePassword `
     -Force
 #Post-installation reboot
-Write-Host "Installation complete. Rebooting the server before anything else" -ForegroundColor Green
+Write-Host "Installation complete. Rebooting the server before anything else, you can do " -ForegroundColor Green
