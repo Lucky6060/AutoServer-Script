@@ -69,18 +69,18 @@ Function UserCreationFunction {
 #This is the start of the script! (excluding functions of course)
 
 #We are calling the function that reads out the CSV file via PathInformationFunction
-    PathInformationFunction
+PathInformationFunction
 
-    #We are adding a small pop up that warns the user that by pressing enter they agree to the following users stated will be added to the viable adgroup.
-    Read-Host "`nIs this information correct? (Press 'ENTER' to continue) `nWARNING!!! Pressing Enter will begin the Process of adding every user to the '$adGroup'"
-    foreach ($row in $CSV_COMPLETION) {
-        $UserID = $row.USERID
-        $FirstName = $row.FIRSTNAME
-        $MiddleName = $row.MIDDLENAME
-        $LastName = $row.LASTNAME
+#We are adding a small pop up that warns the user that by pressing enter they agree to the following users stated will be added to the viable adgroup.
+Read-Host "`nIs this information correct? (Press 'ENTER' to continue) `nWARNING!!! Pressing Enter will begin the Process of adding every user to the '$adGroup'"
+foreach ($row in $CSV_COMPLETION) {
+    $UserID = $row.USERID
+    $FirstName = $row.FIRSTNAME
+    $MiddleName = $row.MIDDLENAME
+    $LastName = $row.LASTNAME
 
-        UserCreationFunction($UserID, $FirstName, $MiddleName, $LastName)
-    }
+    UserCreationFunction($UserID, $FirstName, $MiddleName, $LastName)
+}
 
 
 #-------------------------------------------------------------------------------------------------------------------------------
