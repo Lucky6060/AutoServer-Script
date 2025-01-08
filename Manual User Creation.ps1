@@ -20,9 +20,6 @@ if ($DGroup) {
     #else we will make the user press 'Enter' and we will commit the changes :)
     Read-Host-host "The ADGroup'$adGroup' does not exist on the Domain Controller! `nCreating ADgroup [PRESS ENTER]"
     New-ADGroup -Name $adGroup -GroupScope Global -GroupCategory Security -SamAccountName $adGroup -Server $DomainPrefix
-} elseif ($DGroup) {
-    #Now we are checking for if the adgroup has been created!
-    write-host "The ADGroup'$adGroup' is now created on the domain controller. `nLet's continue to the user creation process.`n"
 } else {
     Write-Host "Code is broken... Help"
 }
