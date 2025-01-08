@@ -24,11 +24,11 @@ if ($StaticIP -notin @("DHCP", "dhcp")) {
 
 
 # Set Static IP Address
-if  ($StaticIP -in @("DHCP", "dhcp")) {
+if  ($StaticIP.ToUpper() -eq "DHCP") {
     Write-Host "Configuring IP address as DHCP..." -ForegroundColor Yellow
     if ($Interface) {
         try {
-            Set-DhcpClient -InterfaceIndex $Interface.InterfaceIndex
+            Set-NetIPInterface -InterfaceIndex $Interface.InterfaceIndex -Dhcp Enabled
             Write-Host "DHCP has been enabled for the interface: $($Interface.Name)" -ForegroundColor Green
         } catch{
             Write-Host "Failed to enable DHCP. Error: $_" -ForegroundColor Red
