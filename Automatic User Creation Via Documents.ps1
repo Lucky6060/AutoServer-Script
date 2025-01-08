@@ -16,7 +16,7 @@
 Function PathInformationFunction {
     #Were making an if statement to see if the CSV path was valid :)
     if ($CSV_COMPLETION) {
-        Write-Host "The CSV PATH: '$CSV_PATH' is functional"
+        Write-Host "The CSV PATH: '$CSV_PATH' is functional`n"
         # Her bruger vi Foreach jeg fandt på microsoft learn.
         # Vi skal bruge dette da vi skal havde en function kørende der lopper indtil dokumentet er tomt.
         foreach ($row in $CSV_COMPLETION) {
@@ -27,7 +27,7 @@ Function PathInformationFunction {
 
                 Write-Host "UserID: $UserID, First Name: $FirstName, Middle Name: $MiddleName, Last Name: $LastName"}
         } else {
-    Write-Host "did not work"}
+    Write-Host "did not work`n"}
 }
 
 #Function that will one by one create users in the AD group.
@@ -39,22 +39,20 @@ Function UserCreationFunction {
     $existingUser = Get-ADUser -Filter { SamAccountName -eq $username }
     if ($existingUser) {
         Write-Host "Error!!! A user already has the username '$username' please run the script again and try something else."
-            } else {
-                # This creates the ADuser
-                New-ADUser -Name $FullName `
-                    -GivenName $FirstName `
-                    -Surname $LastName `
-                    -SamAccountName $username `
-                    -UserPrincipalName "$username$DomainPrefix" `
-                    -AccountPassword $password `
-                    -Enabled $true
+        } else {
+            # This creates the ADuser
+            New-ADUser -Name $FullName `
+                -GivenName $FirstName `
+                -Surname $LastName `
+                -SamAccountName $username `
+                -UserPrincipalName "$username$DomainPrefix" `
+                -AccountPassword $password `
+                -Enabled $true
         
                 # After user creation we will add it to the group in our case MonkeyMembers!
                 Add-ADGroupMember -Identity $adGroup -Members $username
                 Write-Host "Success! :o $fullName ($username) has been added to the group '$adGroup'."
                 Write-Host "Temp/Default Password: $passwordPlain (ask the user to change it at first login).`n"
-            } else {
-            Write-Host "UserCreation Script Failed! mayday mayday. Are you stupid? why didn't you type Yes >:C" 
         }
 }
 
@@ -65,7 +63,7 @@ Function UserCreationFunction {
 PathInformationFunction
 
 #We are adding a small pop up that warns the user that by pressing enter they agree to the following users stated will be added to the viable adgroup.
-Read-Host "Is this information correct? (Press 'ENTER' to continue) `nWARNING!!! Pressing Enter will begin the Process of adding every user to the '$adGroup'"
+Read-Host "`nIs this information correct? (Press 'ENTER' to continue) `nWARNING!!! Pressing Enter will begin the Process of adding every user to the '$adGroup'"
 
 #This Foreach will one by one go through every user in the CSV file. Create a username, Fullname, And a password.
 foreach ($row in $CSV_COMPLETION) {
