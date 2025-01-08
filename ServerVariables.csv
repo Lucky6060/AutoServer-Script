@@ -1,0 +1,2 @@
+﻿ServerName,ADGroup,DomainPrefix,UserCSVPath
+MonkeyH3Server,MonkeyMembers,MonkeyH3S.local,C:\KodningFolder\JoachimRepo\AutoServer\UserCreation.csv

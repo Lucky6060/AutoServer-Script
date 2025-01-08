@@ -1,29 +1,30 @@
 #-------------------------------------------------------------------------------------------------------------------------------
 
 #Automatic User Creation Via Documents
-#powershell invoke, ip get-credentials.
-#Variable List:
-        #Server Variables
         #'Enable-PSRemoting -Force' on the domain controller for credentials to work.
         $Credentials = Get-Credential
-        $serverName = ""
-        # The AD Group the script the users will be added to!
-        # In our case we have a group called MonkeyMembers & our Domain is @Monkey.local (the @ is important)
-        $adGroup = "MonkeyMembers"
-        $DomainPrefix = "@Monkey.local"
         #First we start by importing the code.
         #These values will be automated in the future but for now it's important to keep track of their hard coded values.
-        $CSV_PATH = "C:\KodningFolder\JoachimRepo\AutoServer\User creation folder.csv"
-        $CSV_COMPLETION = Import-CSV -Path "$CSV_PATH"
-        
+        $SERVER_CSV_PATH = "C:\KodningFolder\JoachimRepo\AutoServer\ServerVariables.csv"
+        $SERVER_CSV_COMPLETION = Import-CSV -Path "$SERVER_CSV_PATH"
+        $USER_CSV_PATH = $Server_CSV_COMPLETION.UserCSVPath
+        $USER_CSV_COMPLETION = Import-CSV -Path "$USER_CSV_PATH"
+
+        #Server Variables
+        # The AD Group the script the users will be added to!
+        # In our case we have a group called MonkeyMembers & our Domain is @Monkey.local (the @ is important)
+        $adGroup = $SERVER_CSV_COMPLETION.ADGroup
+        $DomainPrefix = $SERVER_CSV_COMPLETION.DomainPrefix
+        $serverName = $SERVER_CSV_COMPLETION.ServerName
+
 #Stupid function that does NATHING... NATHING (it finds the CSV folders information and pastes it out.)
 Function PathInformationFunction {
     #Were making an if statement to see if the CSV path was valid :)
-    if ($CSV_COMPLETION) {
-        Write-Host "The CSV PATH: '$CSV_PATH' is functional`n"
+    if ($USER_CSV_COMPLETION) {
+        Write-Host "The CSV PATH: '$USER_CSV_PATH' is functional`n"
         # Her bruger vi Foreach jeg fandt på microsoft learn.
         # Vi skal bruge dette da vi skal havde en function kørende der lopper indtil dokumentet er tomt.
-        foreach ($row in $CSV_COMPLETION) {
+        foreach ($row in $USER_CSV_COMPLETION) {
                 $UserID = $row.USERID
                 $FirstName = $row.FIRSTNAME
                 $MiddleName = $row.MIDDLENAME
@@ -49,7 +50,7 @@ Function UserCreationFunction {
                 -GivenName $FirstName `
                 -Surname $LastName `
                 -SamAccountName $username `
-                -UserPrincipalName "$username$DomainPrefix" `
+                -UserPrincipalName "$username@$DomainPrefix" `
                 -AccountPassword $password `
                 -Enabled $true
         
@@ -71,7 +72,6 @@ Function UserCreationFunction {
 
 #-------------------------------------------------------------------------------------------------------------------------------
 #This is the start of the script! (excluding functions of course)
-
 #We are calling the function that reads out the CSV file via PathInformationFunction
 PathInformationFunction
 
@@ -79,7 +79,7 @@ PathInformationFunction
 Read-Host "`nIs this information correct? (Press 'ENTER' to continue) `nWARNING!!! Pressing Enter will begin the Process of adding every user to the '$adGroup'"
 
 #This Foreach will one by one go through every user in the CSV file. Create a username, Fullname, And a password.
-foreach ($row in $CSV_COMPLETION) {
+foreach ($row in $USER_CSV_COMPLETION) {
     $UserID = $row.USERID
     $FirstName = $row.FIRSTNAME
     $MiddleName = $row.MIDDLENAME
