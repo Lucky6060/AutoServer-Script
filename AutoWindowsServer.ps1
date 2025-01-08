@@ -13,8 +13,13 @@ $Interface = Get-NetAdapter | Where-Object {$_.Status -eq "Up"}                 
 #Convert Safe Mode password to a secure string
 $SecureSafeModePassword = ConvertTo-SecureString $SafeModePassword -AsPlainText -Force
 
+#Installs chocolatey on to the server
+Set-ExecutionPolicy Bypass -Scope Process -Force
+C:\Users\Adminstrator\AutoServer-Script\ChocoInstaller\Install.ps1 -ChocolateyDownloadUrl C:\Users\Adminstrator\AutoServer-Script\ChocoInstaller\Chocolatey.nupkg
+
+
 #installs python via chocolatey
-choco install python --pre -a
+choco install python -y
 
 
 
@@ -24,6 +29,7 @@ if  ($StaticIP -in @("DHCP", "dhcp")) {
     Write-Host "IP address is set to DHCP"
     if ($Interface) {
         Set-DhcpClient -InterfaceIndex $Interface.InterfaceIndex
+        Write-Host "DHCP has been enabled for the interface: $($Interface.Name)" -ForegroundColor Green
     }
 } elseif ($Interface) { 
     New-NetIPAddress -InterfaceIndex $Interface.InterfaceIndex `
