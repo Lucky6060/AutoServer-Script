@@ -70,7 +70,6 @@ Function UserCreationFunction {
 
 #We are calling the function that reads out the CSV file via PathInformationFunction
 PathInformationFunction
-
 #We are adding a small pop up that warns the user that by pressing enter they agree to the following users stated will be added to the viable adgroup.
 Read-Host "`nIs this information correct? (Press 'ENTER' to continue) `nWARNING!!! Pressing Enter will begin the Process of adding every user to the '$adGroup'"
 foreach ($row in $CSV_COMPLETION) {
