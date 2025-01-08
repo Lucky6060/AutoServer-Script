@@ -1,8 +1,12 @@
 #-------------------------------------------------------------------------------------------------------------------------------
 
 #Automatic User Creation Via Documents
-
+#powershell invoke, ip get-credentials.
 #Variable List:
+        #Server Variables
+        #'Enable-PSRemoting -Force' on the domain controller for credentials to work.
+        $Credentials = Get-Credential
+        $serverName = ""
         # The AD Group the script the users will be added to!
         # In our case we have a group called MonkeyMembers & our Domain is @Monkey.local (the @ is important)
         $adGroup = "MonkeyMembers"
@@ -32,13 +36,13 @@ Function PathInformationFunction {
 
 #Function that will one by one create users in the AD group.
 Function UserCreationFunction {
-
+    #Type sum
     Write-Host "Creating user account for $Firstname..."
         
     # Using the Get-ADUser combined with SamAccountName to find any username Equal to our Username.
+    $InvokeResults = Invoke-Command -ComputerName $serverName -Credential $Credentials -ScriptBlock {
     $existingUser = Get-ADUser -Filter { SamAccountName -eq $username }
     if ($existingUser) {
-        Write-Host "Error!!! A user already has the username '$username' please run the script again and try something else."
         } else {
             # This creates the ADuser
             New-ADUser -Name $FullName `
@@ -51,9 +55,18 @@ Function UserCreationFunction {
         
                 # After user creation we will add it to the group in our case MonkeyMembers!
                 Add-ADGroupMember -Identity $adGroup -Members $username
-                Write-Host "Success! :o $fullName ($username) has been added to the group '$adGroup'."
-                Write-Host "Temp/Default Password: $passwordPlain (ask the user to change it at first login).`n"
         }
+    } 
+    #Error Codes for this function... These aren't really important they are just for finishing touches.
+    if ($InvokeResults = -ne) {
+        Write-Host "Error!!! the invoke has failed with the message: '$InvokeResults'"
+    }
+    if ($existingUser) {
+        Write-Host "Error!!! A user already has the username '$username' please run the script again and try something else."
+    } else  {
+            Write-Host "Success! $fullName ($username) has been added to the group '$adGroup'."
+            Write-Host "Temp/Default Password: $passwordPlain (ask the user to change it at first login).`n"
+    }
 }
 
 #-------------------------------------------------------------------------------------------------------------------------------
