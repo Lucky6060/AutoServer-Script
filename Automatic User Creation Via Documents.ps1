@@ -2,12 +2,17 @@
 
 #Automatic User Creation Via Documents
 
+#Variable List:
+        # The AD Group the script the users will be added to!
+        # In our case we have a group called MonkeyMembers & our Domain is @Monkey.local
+        $adGroup = "MonkeyMembers"
+        $DomainPrefix = "@Monkey.local"
+        
 #Stupid function that does NATHING... NATHING (it finds the CSV folders information and pastes it out.)
 Function PathInformationFunction {
     Param (
-        #Variable List:
         #Variable for the CSV Path, IMPORTANT!
-        $CSV_PATH = "C:\KodningFolder\User creation folder.csv")
+        $CSV_PATH = "C:\KodningFolder\JoachimRepo\AutoServer\User creation folder.csv")
         #First we start by importing the code.
         $CSV_COMPLETION = Import-CSV -Path "$CSV_PATH"
 
@@ -30,12 +35,6 @@ Function PathInformationFunction {
 #Function that will one by one create users in the AD group.
 Function UserCreationFunction {
     Param (
-        #Variable List:
-        # The AD Group the script the users will be added to!
-        # In our case we have a group called MonkeyMembers & our Domain is @Monkey.local
-        $adGroup = "MonkeyMembers",
-        $DomainPrefix = "@Monkey.local",
-
         #Variables for the user creation.
         $UserID,
         $Firstname,
@@ -62,9 +61,9 @@ Function UserCreationFunction {
                 Add-ADGroupMember -Identity $adGroup -Members $username
                 Write-Host "Success! :o $fullName ($username) has been added to the group '$adGroup'."
                 Write-Host "Temp/Default Password: $passwordPlain (ask the user to change it at first login)."
-            }
-        } else {
-            Write-Host "UserCreation Script Failed! mayday mayday. Are you stupid? why didn't you type Yes >:C"
+            } else {
+            Write-Host "UserCreation Script Failed! mayday mayday. Are you stupid? why didn't you type Yes >:C" 
+        }
 }
 
 #This is the start of the script! (excluding functions of course)
@@ -81,8 +80,7 @@ Function UserCreationFunction {
         $LastName = $row.LASTNAME
 
         UserCreationFunction($UserID, $FirstName, $MiddleName, $LastName)
-    } else {
-Write-Host "$UserID did not work"}
+    }
 
 
 #-------------------------------------------------------------------------------------------------------------------------------
