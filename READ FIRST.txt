@@ -4,5 +4,8 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManage
 Step 2: install git so you can clone the repo to the server
 choco install git -y
 
-Step 3: clone the repo
+Step 3: Restart server after instal git
+Restart-Computer
+
+Step 4: clone the repo
 git clone https://github.com/Lucky6060/AutoServer-Script.git
