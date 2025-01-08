@@ -4,7 +4,7 @@
 
 #Variable List:
         # The AD Group the script the users will be added to!
-        # In our case we have a group called MonkeyMembers & our Domain is @Monkey.local
+        # In our case we have a group called MonkeyMembers & our Domain is @Monkey.local (the @ is important)
         $adGroup = "MonkeyMembers"
         $DomainPrefix = "@Monkey.local"
         #First we start by importing the code.
@@ -55,7 +55,7 @@ Function UserCreationFunction {
                 Write-Host "Temp/Default Password: $passwordPlain (ask the user to change it at first login).`n"
             } else {
             Write-Host "UserCreation Script Failed! mayday mayday. Are you stupid? why didn't you type Yes >:C" 
-    }
+        }
 }
 
 #-------------------------------------------------------------------------------------------------------------------------------
