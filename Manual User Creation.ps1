@@ -7,7 +7,26 @@
  # In our case we have a group called MonkeyMembers & our Domain is @Monkey.local
  $adGroup = "MonkeyMembers"
  $DomainPrefix = "@Monkey.local"
- 
+
+#Checking if the $adGroup exsists.
+#if not we would like for it to be created! on $DomainPrefix
+write-host "Checking for '$adGroup' in '$DomainPrefix'"
+#This command tests the DC if DGroup is equal to adGroup.
+$DGroup = Get-ADGroup - Filter { Name -eq $adGroup } -server $DomainPrefix
+if ($DGroup) {
+    #if it's true that means the group already exists. and we wont need to add it.
+    write-host "The ADGroup'$adGroup' exists on the domain controller. `nLet's continue to the user creation process.`n"
+} else {
+    #else we will make the user press 'Enter' and we will commit the changes :)
+    Read-Host-host "The ADGroup'$adGroup' does not exist on the Domain Controller! `nCreating ADgroup [PRESS ENTER]"
+    New-ADGroup -Name $adGroup -GroupScope Global -GroupCategory Security -SamAccountName $adGroup -Server $DomainPrefix
+} elseif ($DGroup) {
+    #Now we are checking for if the adgroup has been created!
+    write-host "The ADGroup'$adGroup' is now created on the domain controller. `nLet's continue to the user creation process.`n"
+} else {
+    Write-Host "Code is broken... Help"
+}
+
 # Ask the script-runner about user details (First name)
 $firstName = Read-Host "Enter the user's first name"
 # Ask the script-runner about user details (Middle name)
