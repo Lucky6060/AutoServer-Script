@@ -15,7 +15,7 @@ function CreateADGroup {
         # Create the group
         New-ADGroup -Name $GroupName `
                     -Description $Description`
-                    -GroupScope $GroupName
+                    -GroupScope $GroupScope
                     -GroupCategory $GroupCategory
                     -Path $OU
         
