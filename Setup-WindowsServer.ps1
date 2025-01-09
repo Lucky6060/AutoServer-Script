@@ -5,18 +5,31 @@ $DomainName = Read-Host "Enter the desired Domain Name, like yourdomain.com"    
 $NetBIOSName = Read-Host "Enter the desired NetBIOS name, like yourdomain"          # NetBIOS name
 $SafeModePassword = Read-Host "Enter the desired SafeModePassword"                  # Secure password for DSRM
 $Interface = Get-NetAdapter | Where-Object {$_.Status -eq "Up"}                     # Get the active network interface
+$Hostname = hostname                                                                # Gets the hostname of the system
+
 
 # Convert Safe Mode password to a secure string
 $SecureSafeModePassword = ConvertTo-SecureString $SafeModePassword -AsPlainText -Force
 
+if ($NewComputerName -ne ($Hostname)){
+    # Rename the Computer
+    Rename-Computer -NewName $NewComputerName -Force
+    Write-Host "The system will restart in 5 seconds" -ForegroundColor Yellow
+    Restart-Computer -Delay 5 -Wait
+    exit
+}
 
+
+# Enables Remoting for the use of invoke command
+Enable-PSRemoting -Force
+
+
+# Set IP as DHCP
 if ($StaticIP -notin @("DHCP", "dhcp")) {
-    # Prompt only if StaticIP is not DHCP
     $SubnetMask = Read-Host "Enter Subnet Mask as number fx. 24 and not 255.255..." # Subnet mask
     $DefaultGateway = Read-Host "Enter the desired Default Gateway"                 # Default gateway
     $DNSServer = Read-Host "Enter the desired DNS Server"                           # Primary DNS server
 } else {
-    # Defaults for DHCP mode (not required but can be included for clarity)
     $SubnetMask = $null
     $DefaultGateway = $null
     $DNSServer = $null
@@ -52,7 +65,6 @@ elseif ($Interface) {
     exit
 }
 
-
 # Install DNS, ADDS, and WIM
 Install-WindowsFeature -Name AD-Domain-Services, DNS, Windows-Internal-Database -IncludeManagementTools
 
@@ -63,9 +75,6 @@ Install-ADDSForest -DomainName $DomainName `
     -DomainNetBIOSName $NetBIOSName `
     -SafeModeAdministratorPassword $SecureSafeModePassword `
     -Force
-
-# Rename the Computer
-Rename-Computer -NewName $NewComputerName -Force
 
 # Post-installation reboot
 Write-Host "Installation complete. Reboot the server with Restart-Computer" -ForegroundColor Green
