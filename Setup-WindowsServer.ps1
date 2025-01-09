@@ -1,24 +1,31 @@
+function CheckSystemName {
+    # Variables for needed for name check
+    $NewComputerName = Read-Host "Enter the desired server name"    # New computer name
+    $Hostname = hostname                                            # Gets the hostname of the system
+    
+    # Checks if system name is not equal to hostname then changes it to the input the user entered if true else it skips it
+    if ($NewComputerName -ne ($Hostname)){
+        # Rename the Computer
+        Rename-Computer -NewName $NewComputerName -Force
+        Write-Host "The system will restart NOW!!" -ForegroundColor Yellow
+        Restart-Computer
+        exit
+    }
+
+}
+
+# Check the system name (go to the function for detail about it)
+CheckSystemName
+
 # Variables
-$NewComputerName = Read-Host "Enter the desired server name"                        # New computer name
 $StaticIP = Read-Host "Enter the desired IP Address (or type 'DHCP' for DHCP)"      # Static IP address or DHCP
 $DomainName = Read-Host "Enter the desired Domain Name, like yourdomain.com"        # Desired domain name
 $NetBIOSName = Read-Host "Enter the desired NetBIOS name, like yourdomain"          # NetBIOS name
 $SafeModePassword = Read-Host "Enter the desired SafeModePassword"                  # Secure password for DSRM
 $Interface = Get-NetAdapter | Where-Object {$_.Status -eq "Up"}                     # Get the active network interface
-$Hostname = hostname                                                                # Gets the hostname of the system
-
 
 # Convert Safe Mode password to a secure string
 $SecureSafeModePassword = ConvertTo-SecureString $SafeModePassword -AsPlainText -Force
-
-if ($NewComputerName -ne ($Hostname)){
-    # Rename the Computer
-    Rename-Computer -NewName $NewComputerName -Force
-    Write-Host "The system will restart in 5 seconds" -ForegroundColor Yellow
-    Restart-Computer -Delay 5 -Wait
-    exit
-}
-
 
 # Enables Remoting for the use of invoke command
 Enable-PSRemoting -Force
