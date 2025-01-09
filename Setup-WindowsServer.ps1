@@ -73,8 +73,8 @@ elseif ($Interface) {
     exit
 }
 
-# Install DNS, ADDS, and WIM
-Install-WindowsFeature -Name AD-Domain-Services, DNS, Windows-Internal-Database -IncludeManagementTools
+# Install DNS, ADDS, and IIS
+Install-WindowsFeature -Name AD-Domain-Services, DNS, Web-Server -IncludeManagementTools
 
 # Promote the Server to a Domain Controller
 Import-Module ADDSDeployment
