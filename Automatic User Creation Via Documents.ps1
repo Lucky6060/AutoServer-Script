@@ -5,7 +5,7 @@
         $Credentials = Get-Credential
         #First we start by importing the code.
         #These values will be automated in the future but for now it's important to keep track of their hard coded values.
-        $SERVER_CSV_PATH = "C:\KodningFolder\JoachimRepo\AutoServer\ServerVariables.csv"
+        $SERVER_CSV_PATH = "C:\Users\Administrator\AutoServer-Script\ServerVariables.csv"
         $SERVER_CSV_COMPLETION = Import-CSV -Path "$SERVER_CSV_PATH"
         $USER_CSV_PATH = $Server_CSV_COMPLETION.UserCSVPath
         $USER_CSV_COMPLETION = Import-CSV -Path "$USER_CSV_PATH"
