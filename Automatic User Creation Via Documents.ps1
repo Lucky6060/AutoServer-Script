@@ -17,6 +17,8 @@
         $DomainPrefix = $SERVER_CSV_COMPLETION.DomainPrefix
         $serverName = $SERVER_CSV_COMPLETION.ServerName
 
+#-------------------------------------------------------------------------------------------------------------------------------
+
 #Stupid function that does NATHING... NATHING (it finds the CSV folders information and pastes it out.)
 Function PathInformationFunction {
     #Were making an if statement to see if the CSV path was valid :)
@@ -70,9 +72,30 @@ Function UserCreationFunction {
     }
 }
 
+#Function for user assembly, it creates the username, assembles full name, and generate a temporary password.
+function AssembleUserFunction {
+    # Generate the username (e.g., FirstName.LastName)
+    #Takes your first name and lastname and makes it all lowercase with a dot to sepperate the two :)
+    $username = "$firstName.$lastName".ToLower()
+
+    # Assemble the FullName Variable! (and if your name doesn't have to contain a middlename we have accounted for that! :o )
+    if ($middleName) {
+        $FullName = "$FirstName $MiddleName $LastName"
+    } else {
+        $FullName = "$FirstName $LastName" 
+    }
+
+    # Generate the default password (e.g., FirstNameLastInitial@2025)
+    # we have decided to do the password, Name(first initial of your last name)@Currentyear(this being 2025 in this case)
+    $currentYear = (Get-Date).Year
+    $passwordPlain = "$firstName$($lastName.Substring(0,1))@$currentYear"
+    $password = ConvertTo-SecureString $passwordPlain -AsPlainText -Force
+
+}
+
 #-------------------------------------------------------------------------------------------------------------------------------
 #This is the start of the script! (excluding functions of course)
-#We are calling the function that reads out the CSV file via PathInformationFunction
+#Calls upon the PathInformationFunction
 PathInformationFunction
 
 #We are adding a small pop up that warns the user that by pressing enter they agree to the following users stated will be added to the viable adgroup.
@@ -85,23 +108,11 @@ foreach ($row in $USER_CSV_COMPLETION) {
     $MiddleName = $row.MIDDLENAME
     $LastName = $row.LASTNAME
 
-    # Generate the username (e.g., FirstName.LastName)
-    #Takes your first name and lastname and makes it all lowercase with a dot to sepperate the two :)
-    $username = "$firstName.$lastName".ToLower()
+    #Calls upon the AssembleUsersFunction
+    $AssembleFunction = AssembleUserFunction($FirstName, $MiddleName, $LastName)
 
-    # Assemble the FullName Variable! (and if your name doesn't have to contain a middlename we have accounted for that! :o )
-    if ($middleName) {
-    $FullName = "$FirstName $MiddleName $LastName"
-    } else {
-    $FullName = "$FirstName $LastName" }
-
-    # Generate the default password (e.g., FirstNameLastInitial@2025)
-    # we have decided to do the password, Name(first initial of your last name)@Currentyear(this being 2025 in this case)
-    $currentYear = (Get-Date).Year
-    $passwordPlain = "$firstName$($lastName.Substring(0,1))@$currentYear"
-    $password = ConvertTo-SecureString $passwordPlain -AsPlainText -Force
-
-    UserCreationFunction($UserID, $FirstName, $MiddleName, $LastName, $FullName, $username, $passwordPlain, $password)
+    #Calls upon the UserCreationFunction
+    UserCreationFunction($UserID, $FirstName, $MiddleName, $LastName, $AssembleFunction.FullName, $AssembleFunction.username, $AssembleFunction.passwordPlain, $AssembleFunction.password)
 }
 
 #-------------------------------------------------------------------------------------------------------------------------------
