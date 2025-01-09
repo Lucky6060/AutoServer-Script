@@ -61,9 +61,9 @@ Function UserCreationFunction {
         }
     } 
     #Error Codes for this function... These aren't really important they are just for finishing touches.
-    if ($InvokeResults = -ne) {
+    <#if ($InvokeResults = -ne) {
         Write-Host "Error!!! the invoke has failed with the message: '$InvokeResults'"
-    }
+    }#>
     if ($existingUser) {
         Write-Host "Error!!! A user already has the username '$username' please run the script again and try something else."
     } else  {
@@ -71,9 +71,23 @@ Function UserCreationFunction {
             Write-Host "Temp/Default Password: $passwordPlain (ask the user to change it at first login).`n"
     }
 }
+#i would have liked to have the UserAssembleFunction here but because everything was out of scope and using objects didn't work i've given up on this idea...
 
-#Function for user assembly, it creates the username, assembles full name, and generate a temporary password.
-function AssembleUserFunction {
+#-------------------------------------------------------------------------------------------------------------------------------
+#This is the start of the script! (excluding functions of course)
+#Calls upon the PathInformationFunction
+PathInformationFunction
+
+#We are adding a small pop up that warns the user that by pressing enter they agree to the following users stated will be added to the viable adgroup.
+Read-Host "`nIs this information correct? (Press 'ENTER' to continue) `nWARNING!!! Pressing Enter will begin the Process of adding every user to the '$adGroup'"
+
+#This Foreach will one by one go through every user in the CSV file. Create a username, Fullname, And a password.
+foreach ($row in $USER_CSV_COMPLETION) {
+    $UserID = $row.USERID
+    $FirstName = $row.FIRSTNAME
+    $MiddleName = $row.MIDDLENAME
+    $LastName = $row.LASTNAME
+
     # Generate the username (e.g., FirstName.LastName)
     #Takes your first name and lastname and makes it all lowercase with a dot to sepperate the two :)
     $username = "$firstName.$lastName".ToLower()
@@ -91,28 +105,8 @@ function AssembleUserFunction {
     $passwordPlain = "$firstName$($lastName.Substring(0,1))@$currentYear"
     $password = ConvertTo-SecureString $passwordPlain -AsPlainText -Force
 
-}
-
-#-------------------------------------------------------------------------------------------------------------------------------
-#This is the start of the script! (excluding functions of course)
-#Calls upon the PathInformationFunction
-PathInformationFunction
-
-#We are adding a small pop up that warns the user that by pressing enter they agree to the following users stated will be added to the viable adgroup.
-Read-Host "`nIs this information correct? (Press 'ENTER' to continue) `nWARNING!!! Pressing Enter will begin the Process of adding every user to the '$adGroup'"
-
-#This Foreach will one by one go through every user in the CSV file. Create a username, Fullname, And a password.
-foreach ($row in $USER_CSV_COMPLETION) {
-    $UserID = $row.USERID
-    $FirstName = $row.FIRSTNAME
-    $MiddleName = $row.MIDDLENAME
-    $LastName = $row.LASTNAME
-
-    #Calls upon the AssembleUsersFunction
-    $AssembleFunction = AssembleUserFunction($FirstName, $MiddleName, $LastName)
-
     #Calls upon the UserCreationFunction
-    UserCreationFunction($UserID, $FirstName, $MiddleName, $LastName, $AssembleFunction.FullName, $AssembleFunction.username, $AssembleFunction.passwordPlain, $AssembleFunction.password)
+    UserCreationFunction ($FullName, $Username, $PasswordPlain, $Password)
 }
 
 #-------------------------------------------------------------------------------------------------------------------------------
