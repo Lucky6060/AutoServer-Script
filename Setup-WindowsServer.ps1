@@ -9,14 +9,16 @@ $Interface = Get-NetAdapter | Where-Object {$_.Status -eq "Up"}                 
 # Convert Safe Mode password to a secure string
 $SecureSafeModePassword = ConvertTo-SecureString $SafeModePassword -AsPlainText -Force
 
+# Enables Remoting for the use of invoke command
+Enable-PSRemoting -Force
 
+
+# Set IP as DHCP
 if ($StaticIP -notin @("DHCP", "dhcp")) {
-    # Prompt only if StaticIP is not DHCP
     $SubnetMask = Read-Host "Enter Subnet Mask as number fx. 24 and not 255.255..." # Subnet mask
     $DefaultGateway = Read-Host "Enter the desired Default Gateway"                 # Default gateway
     $DNSServer = Read-Host "Enter the desired DNS Server"                           # Primary DNS server
 } else {
-    # Defaults for DHCP mode (not required but can be included for clarity)
     $SubnetMask = $null
     $DefaultGateway = $null
     $DNSServer = $null
