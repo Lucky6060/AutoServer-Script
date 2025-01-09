@@ -5,9 +5,19 @@ $DomainName = Read-Host "Enter the desired Domain Name, like yourdomain.com"    
 $NetBIOSName = Read-Host "Enter the desired NetBIOS name, like yourdomain"          # NetBIOS name
 $SafeModePassword = Read-Host "Enter the desired SafeModePassword"                  # Secure password for DSRM
 $Interface = Get-NetAdapter | Where-Object {$_.Status -eq "Up"}                     # Get the active network interface
+$Hostname = hostname                                                                # Gets the hostname of the system
+
 
 # Convert Safe Mode password to a secure string
 $SecureSafeModePassword = ConvertTo-SecureString $SafeModePassword -AsPlainText -Force
+
+if ($NewComputerName -ne ($Hostname)){
+    # Rename the Computer
+    Rename-Computer -NewName $NewComputerName -Force
+    Write-Host "The system will restart in 5 seconds"
+    Restart-Computer -Delay 5
+}
+
 
 # Enables Remoting for the use of invoke command
 Enable-PSRemoting -Force
@@ -54,7 +64,6 @@ elseif ($Interface) {
     exit
 }
 
-
 # Install DNS, ADDS, and WIM
 Install-WindowsFeature -Name AD-Domain-Services, DNS, Windows-Internal-Database -IncludeManagementTools
 
@@ -65,9 +74,6 @@ Install-ADDSForest -DomainName $DomainName `
     -DomainNetBIOSName $NetBIOSName `
     -SafeModeAdministratorPassword $SecureSafeModePassword `
     -Force
-
-# Rename the Computer
-Rename-Computer -NewName $NewComputerName -Force
 
 # Post-installation reboot
 Write-Host "Installation complete. Reboot the server with Restart-Computer" -ForegroundColor Green
