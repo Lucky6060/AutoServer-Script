@@ -28,6 +28,7 @@ $Interface = Get-NetAdapter | Where-Object {$_.Status -eq "Up"}                 
 $SecureSafeModePassword = ConvertTo-SecureString $SafeModePassword -AsPlainText -Force
 
 # Enables Remoting for the use of invoke command
+Write-Host "Enables Remoting for running scripts remotely" -ForegroundColor Blue
 Enable-PSRemoting -Force
 
 
@@ -84,4 +85,4 @@ Install-ADDSForest -DomainName $DomainName `
     -Force
 
 # Post-installation reboot
-Write-Host "Installation complete. Reboot the server with Restart-Computer" -ForegroundColor Green
+Write-Host "Installation complete. The system will reboot shortly :)" -ForegroundColor Green
