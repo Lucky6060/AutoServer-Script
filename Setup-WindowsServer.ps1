@@ -14,8 +14,8 @@ $SecureSafeModePassword = ConvertTo-SecureString $SafeModePassword -AsPlainText 
 if ($NewComputerName -ne ($Hostname)){
     # Rename the Computer
     Rename-Computer -NewName $NewComputerName -Force
-    Write-Host "The system will restart in 5 seconds"
-    Restart-Computer -Delay 5
+    Write-Host "The system will restart in 5 seconds" -ForegroundColor Yellow
+    Restart-Computer -Delay 5 -Wait
     exit
 }
 
