@@ -11,7 +11,6 @@ function CheckSystemName {
         Restart-Computer
         exit
     }
-
 }
 
 # Check the system name (go to the function for detail about it)
@@ -31,7 +30,6 @@ $SecureSafeModePassword = ConvertTo-SecureString $SafeModePassword -AsPlainText 
 Write-Host "Enables Remoting for running scripts remotely" -ForegroundColor Blue
 Enable-PSRemoting -Force
 
-
 # Set IP as DHCP
 if ($StaticIP -notin @("DHCP", "dhcp")) {
     $SubnetMask = Read-Host "Enter Subnet Mask as number fx. 24 and not 255.255..." # Subnet mask
@@ -42,7 +40,6 @@ if ($StaticIP -notin @("DHCP", "dhcp")) {
     $DefaultGateway = $null
     $DNSServer = $null
 }
-
 
 # Set Static IP Address
 if  ($StaticIP.ToUpper() -eq "DHCP") {
