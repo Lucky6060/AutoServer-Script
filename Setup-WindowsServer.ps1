@@ -1,3 +1,18 @@
+<#
+NAME
+    Setup-WindowsServer.ps1
+    
+SYNOPSIS
+    Used to setup a windows server and install DNS, ADDS and IIS
+    
+
+DESCRIPTION
+    With this script you'll be able to setup a windows server through powershell, it will configure System Name, Domain and NetBIOS.
+    It also installs windows features that are pre configured in the script. It also changes the IP address
+    you can choose if you want it to be static or dhcp and of course if you choose static you also have to enter
+    subnet mask, default gateway and DNS for the system 
+#>
+
 function CheckSystemName {
     # Variables for needed for name check
     $NewComputerName = Read-Host "Enter the desired server name"    # New computer name
